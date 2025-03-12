@@ -97,7 +97,6 @@ library(hms)
           r<-cor.test(x=log(M),y=log(L),method='pearson')$estimate
           outliers<-which(abs(rstandard(OLS))>3)
           bSMA<-bOLS/r
-        }   }   
       L0<-median(L,na.rm=T)
       SMi<-M*((L0/L)^bSMA)
       return(SMi) 
@@ -179,7 +178,7 @@ library(hms)
         prop_1=(dur_dawn/sunlist1$nightdur_1[sunlist1$day %in% day])
         prop_2=(dur_dusk/sunlist1$nightdur_2[sunlist1$day %in% day])
       
-      write.csv(nightprop, "~/HoSp Data/prepared datasets/nightpropX.csv", row.names=FALSE)
+      write.csv(nightprop, "~/HoSp Data/prepared datasets/nightprop2.csv", row.names=FALSE)
       
       #open 'nightprop' in Excel and add columns for site, sex, and smi using XLOOKUP and 'smiID'
       # manually removed values for first half of first day and second half of last day for which
