@@ -7,7 +7,7 @@ library(emmeans)
 library(nlme)
 library(tidyr)
 
-# ONSET -------------------------------------------------------------------
+# __ONSET -------------------------------------------------------------------
 
 # ONSET: SEX DIFFS AT LOW ALAN
 onset_low<-onsetoffset %>% filter(site=='farm')  #isolate data from one site
@@ -50,7 +50,7 @@ ONSET_SITEsumm<-as.data.frame(ONSET_SITEsumm);  ONSET_SITEsumm  #convert to df a
 KTonset<-kruskal.test(avg_onset_rel~site,data=onsetoffset); KTonset  #Kruskal-Wallis rank sum test
 as.data.frame(dunn_test(onsetoffset,avg_onset_rel~site,p.adjust.method="holm"))  #Dunn test
 
-# OFFSET ------------------------------------------------------------------
+# __OFFSET ------------------------------------------------------------------
 
 # OFFSET: SEX DIFFS AT LOW ALAN
 offset_low<-onsetoffset %>% filter(site=='farm')
@@ -95,7 +95,7 @@ kruskal.test(avg_offset_rel~site,data=onsetoffset)
 as.data.frame(dunn_test(onsetoffset,avg_offset_rel~site,p.adjust.method="holm"))  
 
 
-# NOCTURNAL ACTIVITY ------------------------------------------------------
+# __NOCTURNAL ACTIVITY ------------------------------------------------------
 
 # NOCTURNAL ACTIVITY: SEX DIFFS AT LOW ALAN
 noctact_low<-nightprop %>% filter(site=='farm')
@@ -148,7 +148,7 @@ wilcox.test(avg_prop~sex,data=noctact_high)
 
 ##__ FEEDING RATES __
 #************#    
-# __TOTAL FEED RATE model -------------------------------------------------
+# __TOTAL FEED RATE  -------------------------------------------------
 as.data.frame(group_by(reprodata,location) %>% summarize(meanfeed=mean(feedtot,na.rm=TRUE),
   sd=sd(feedtot,na.rm=TRUE),se=std.error(feedtot,na.rm=TRUE)))
 
@@ -172,7 +172,7 @@ cor.test(x=fitness_low$feedtot,y=fitness_low$smi1,method='kendall')
 as.data.frame(group_by(reprodata,location) %>% summarize(meanfeed=mean(feedtot,na.rm=TRUE),
   sd=sd(feedtot,na.rm=TRUE),se=std.error(feedtot,na.rm=TRUE)))
 
-
+# test differences in feedrate between males and females
 feeddata<-reprodata %>% pivot_longer(cols=c('mfeed','ffeed'),names_to='sex',values_to='feedrate')
 feeddata2<-data.frame(site=feeddata$location,sex=feeddata$sex,feedrate=feeddata$feedrate)
 feeddata2$sex<-as.factor(feeddata2$sex)
@@ -195,6 +195,7 @@ FRlow_summ<-group_by(FRlow,location) %>% summarize(meanMale=mean(mfeed,na.rm=TRU
   
 
 feedtable<-data.frame(site=reprodata$location,mfeed=reprodata$mfeed,ffeed=reprodata$ffeed)
+
 feedtable<-feedtable %>% group_by(site) %>% summarise(meanMale=mean(mfeed),meanFem=mean(ffeed))
 
 FRlow<-feeddata2 %>% filter(site=='farm')
@@ -205,7 +206,7 @@ FRlow<-feeddata2 %>% filter(site=='farm')
 ##*******##
 
 #************# 
-# __OFFSPRING MASS model --------------------------------------------------
+# __OFFSPRING MASS  --------------------------------------------------
 as.data.frame(group_by(reprodata,location) %>% summarize(meanmass=mean(avgmassyoung,na.rm=TRUE),
   sd=sd(avgmassyoung,na.rm=TRUE),se=std.error(avgmassyoung,na.rm=TRUE)))
 
@@ -225,7 +226,7 @@ cor.test(x=fitness_med$avgmassyoung,y=fitness_med$smi2,method='kendall')
 cor.test(x=fitness_low$avgmassyoung,y=fitness_low$smi2,method='kendall')
 
 #************# 
-# __BROOD SIZE model ------------------------------------------------------
+# __BROOD SIZE  ------------------------------------------------------
 modelC1<-glm(broodsize~location+smi1+smi2,family=poisson(link="log"),data=reprodata);summary(modelC1)
 modelC1.aov<-aov(modelC1); summary(modelC1.aov)
 TukeyHSD(modelC1.aov,which="location")

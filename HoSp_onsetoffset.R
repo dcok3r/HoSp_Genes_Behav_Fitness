@@ -1,5 +1,5 @@
 
-# Code from CK Hui. THANK YOU!
+# Code from CK Hui. THANK YOU!!
 library(dplyr)
 library(lubridate)
 library(ggplot2)
@@ -8,7 +8,7 @@ library(data.table)
 ## DETERMINE ONSET AND OFFSET TIMES ##
 
 #load data
-alltags <- read.csv("~/HoSp Data/prepared datasets/alltags.csv")
+alltags <- read.csv("~/prepared datasets/alltags.csv")
 
 # Combine the date and time columns into a single datetime column
 alltags <- alltags %>% mutate(datetime = as.POSIXct(paste(date, time), format="%Y-%m-%d %H:%M:%S"))

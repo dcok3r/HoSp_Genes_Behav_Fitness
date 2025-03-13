@@ -8,11 +8,11 @@ library(hms)
   # ADD ACTIVITY ("0"/"1") AND "DAY"/"NIGHT" CATEGORIZATION TO RAW DATA --------
     
     ## Create lists of files and names for tag datsets
-      csvlist<-list.files("~/HoSp Data/raw datasets/tagdata")
+      csvlist<-list.files("~/raw datasets/tagdata")
       tagnum<-gsub(".csv","",csvlist)
       tagnum<-substr(tagnum,5,7)
       csvnames<-paste("tag",tagnum,sep="_")
-      setwd("~/HoSp Data/raw datasets/tagdata")
+      setwd("~/raw datasets/tagdata")
       for (k in 1:length(csvlist)) {
         assign(csvnames[k],read.csv(csvlist[k],header=TRUE))  }
       taglist<-mget(ls(pattern="tag_"))
@@ -103,13 +103,13 @@ library(hms)
       return(SMi) 
       }
       
-      captdata<-read.csv("~/HoSp Data/raw datasets/capture data.csv",header=TRUE,na.strings=c("","NA"))
+      captdata<-read.csv("~/raw datasets/capture data.csv",header=TRUE,na.strings=c("","NA"))
       smiframe<-data.frame(site=captdata$location,sex=captdata$sex,ID=captdata$radiotag,
         mass=captdata$weight,tarsus=captdata$tarsus,smi=smi(captdata$weight,captdata$tarsus))
       smiframe$site<-as.factor(smiframe$site)
       smiframe$site<-factor(smiframe$site, levels=c("farm","campus", "greens"))
         smiID<-smiframe
-        write.csv(smiID, "~/HoSp Data/prepared datasets/smiID.csv", row.names=FALSE)
+        write.csv(smiID, "~/prepared datasets/smiID.csv", row.names=FALSE)
 
   # NOCTURNAL ACTIVITY -----------------------------------------------------
     # load all tag datasets first.
@@ -124,7 +124,7 @@ library(hms)
       tag_53_full,tag_54_full)
     alltags<-rbindlist(alltaglist)
     
-    write.csv(alltags, "~/HoSp Data/prepared datasets/alltags.csv", row.names=FALSE)
+    write.csv(alltags, "~/prepared datasets/alltags.csv", row.names=FALSE)
     
       #convert 'day' to numeric
       alltags$day<-as.character(alltags$day)
@@ -179,7 +179,7 @@ library(hms)
         prop_1=(dur_dawn/sunlist1$nightdur_1[sunlist1$day %in% day])
         prop_2=(dur_dusk/sunlist1$nightdur_2[sunlist1$day %in% day])
       
-      write.csv(nightprop, "~/HoSp Data/prepared datasets/nightpropX.csv", row.names=FALSE)
+      write.csv(nightprop, "~/prepared datasets/nightprop2.csv", row.names=FALSE)
       
       #open 'nightprop' in Excel and add columns for site, sex, and smi using XLOOKUP and 'smiID'
       # manually removed values for first half of first day and second half of last day for which
@@ -195,28 +195,16 @@ library(hms)
       write.csv(reprodata, "~/HoSp Data/prepared datasets/reprod_data.csv", row.names=FALSE)
 
 
-  # SEM DF ------------------------------------------------------------------
-    ## MEGA_df.csv was created in Excel by amalgamating capture data.csv, reprod_data.csv, onsetoffset.csv,
-      # smiID, and nightprop2.csv using Lookup functions. Load from "HoSp_SEM" script.
 
-      
-      
+
       
       
 ## OR LOAD TEST-READY DATASETS -------------------------------------------------
   # LOAD: SMI ---------------------------------------------------------------
-    smiID<-read.csv("~/HoSp Data/prepared datasets/smiID.csv",header=TRUE,na.strings=c("","NA"))
-
-  # LOAD: all tag datasets -----------------------------------------------------
-      fulltaglist<-list.files("~/HoSp Data/prepared datasets/full tags")
-    
-      for (o in 1:length(fulltaglist)) {
-        setwd("~/HoSp Data/prepared datasets/full tags")
-        load(fulltaglist[o])
-      }
+    smiID<-read.csv("~/prepared datasets/smiID.csv",header=TRUE,na.strings=c("","NA"))
 
   # LOAD: ONSET & OFFSET ----------------------------------------------------
-    onsetoffset<-read.csv("~/HoSp Data/prepared datasets/onsetoffset.csv",header=TRUE,na.strings=c("","NA"))
+    onsetoffset<-read.csv("~/prepared datasets/onsetoffset.csv",header=TRUE,na.strings=c("","NA"))
       onsetoffset$site<-as.factor(onsetoffset$site)
       onsetoffset$site<-factor(onsetoffset$site, levels=c("farm", "campus", "greens"))
       onsetoffset$sex<-as.factor(onsetoffset$sex)
@@ -232,7 +220,7 @@ library(hms)
       
 
   # LOAD: NOCTURNAL ACTIVITY ------------------------------------------------
-      nightprop<-read.csv("~/HoSp Data/prepared datasets/nightprop2.csv",header=TRUE,na.strings=c("","NA"))
+      nightprop<-read.csv("~/prepared datasets/nightprop2.csv",header=TRUE,na.strings=c("","NA"))
       nightprop$site<-as.factor(nightprop$site)
       nightprop$site<-factor(nightprop$site, levels=c("farm","campus", "greens"))
       nightprop$sex<-as.factor(nightprop$sex)
@@ -246,7 +234,7 @@ library(hms)
 
 
   # LOAD: FITNESS DATA ------------------------------------------------------
-    reprodata<-read.csv("~/HoSp Data/prepared datasets/reprod_data2.csv",header=TRUE,na.strings=c("","NA"))
+    reprodata<-read.csv("~/prepared datasets/reprod_data2.csv",header=TRUE,na.strings=c("","NA"))
       reprodata$location<-as.factor(reprodata$location)
       reprodata$location<-factor(reprodata$location, levels=c("farm","campus","greens"))
       reprodata$broodsize<-as.numeric(reprodata$broodsize)
@@ -261,3 +249,5 @@ library(hms)
   
           
           
+  
+      

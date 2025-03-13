@@ -4,7 +4,7 @@ library(plotrix)
 library(dplyr)
 library(ggbeeswarm)
 
-  ## ONSET -------------------------------------------------------------------
+  ## Fig 2A ONSET -------------------------------------------------------------------
     # LOAD "onsetoffset" from "HoSp_processing.R"
     # summarize relative onset (sd, se, mean) across sites
     ONS_summary <- onsetoffset %>% dplyr::group_by(site) %>% dplyr::summarise(sd = sd(avg_onset_rel,
@@ -29,7 +29,7 @@ library(ggbeeswarm)
           "High ALAN")) +  theme (legend.position = "none") + ylim(-60,20)
 
 
-  ## OFFSET ------------------------------------------------------------------
+  ## Fig 2B OFFSET ------------------------------------------------------------------
     # LOAD "onsetoffset" from "HoSp_processing.R"
     # summarize relative offset (sd, se, mean) across sites
     OFFS_summary <- onsetoffset %>% dplyr::group_by(site) %>% dplyr::summarise(sd = sd(avg_offset_rel,
@@ -48,7 +48,7 @@ library(ggbeeswarm)
         plot.margin = unit(c(0.5,0.5,0.5,0.5),"cm")) + 
       scale_x_discrete(labels=c("Low ALAN","Medium ALAN","High ALAN")) +  ylim (-23,60)
     
-  ## NOCTURNAL ACTIVITY ------------------------------------------------------
+  ## Fig 2C NOCTURNAL ACTIVITY ------------------------------------------------------
     # 3 bar plots
     NA_summary <- nightprop %>% dplyr::group_by(site) %>% dplyr::summarise(sd = sd(avg_prop,
         na.rm=TRUE),se=std.error(avg_prop,na.rm =TRUE), proportion = mean(avg_prop, na.rm=TRUE))
@@ -69,7 +69,7 @@ library(ggbeeswarm)
     
     
 
-  ## OFFSPRING MASS ----------------------------------------------------------
+  ## Fig 3B OFFSPRING MASS ----------------------------------------------------------
     df.summaryA <- reprodata %>% dplyr::group_by(location) %>% dplyr::summarise(
       sd = sd(avgmassyoung,na.rm=TRUE),se=std.error(avgmassyoung,na.rm =TRUE), 
       avgmassyoung = mean(avgmassyoung,na.rm =TRUE)); print.data.frame(df.summaryA)
@@ -86,7 +86,7 @@ library(ggbeeswarm)
       scale_x_discrete(labels=c("Low ALAN","Medium ALAN",
           "High ALAN")) +  theme (legend.position = "none")
 
-  ## FEEDING RATE ------------------------------------------------------------
+  ## Fig 3A FEEDING RATE ------------------------------------------------------------
     feedlong<-reprodata%>%pivot_longer(cols=c("mfeed","ffeed"),names_to="parent",values_to="feedrate")
     df.summaryB1 <- reprodata %>% dplyr::group_by(location) %>% dplyr::summarise(
       sd = sd(mfeed,na.rm=TRUE),se=std.error(mfeed,na.rm =TRUE), mfeed = mean(mfeed,na.rm =TRUE))
@@ -136,4 +136,55 @@ library(ggbeeswarm)
     
     
     
+    
+  
+  ## Fig S1 ACTOGRAMS -------------------------------------------------------
+library(hms)
+
+    ## custom function that makes an actogram for each full dataset
+    actogram<-function(fulldataset){
+      #reverses day order so most recent day is at the bottom
+      fulldataset$day<-factor(fulldataset$day,levels=rev(levels(fulldataset$day)))
+      fulldataset$time<-as_hms(fulldataset$time)
+      # orders activity values so "1", and not "0", is plotted.
+      fulldataset$activity<-factor(fulldataset$activity,levels = c("1","0"))
+
+      
+      
+      ggplot(fulldataset,
+             aes(x=time,y=day,color=as.factor(activity))) + 
+        # xmnin is sunrise & xmax is sunset time in seconds. can adjust manually depending on julian days
+        geom_rect(xmin=0,ymin=-Inf, xmax=86400, ymax=Inf,fill="grey",colour=NA) +
+        geom_rect(xmin=20400,ymin=5.5, xmax=72660, ymax=Inf,fill="white",color=NA) +
+        geom_rect(xmin=20340,ymin=4.5, xmax=72720, ymax=5.5,fill="white",color=NA) +
+        geom_rect(xmin=20280,ymin=3.5, xmax=72780, ymax=4.5,fill="white",color=NA) +
+        geom_rect(xmin=20280,ymin=2.5, xmax=72840, ymax=3.5,fill="white",color=NA) +
+        geom_rect(xmin=20220,ymin=1.5, xmax=72900, ymax=2.5,fill="white",color=NA) +
+        geom_rect(xmin=20220,ymin=-Inf, xmax=72960, ymax=1.5,fill="white",color=NA) +
+        # errorbar function used to plot points with a vertical bar 1px wide
+        geom_errorbar(ymin=as.numeric(tag_1_full$day)-0.4,ymax=as.numeric(tag_1_full$day)+0.4,width=0) +  
+        # x axis goes from 0 to 86400s (24h). axis labels every 21600s (6h).
+        scale_x_continuous(limits = c(0,86400), expand = c(0,0),breaks=seq(0,86400,21600),
+                           labels = c("0","6","12","18","24")) + 
+        xlab("Hour") +  ylab("Julian day") +
+        # set color of "1" and "0". "0" is transparent.
+        scale_color_manual(values = c("black", "#ffffff00")) + 
+        theme_classic() + 
+        theme (axis.line = element_blank(), legend.position = "none", 
+               axis.text = element_text(size = 30), axis.title = element_text(size = 33),
+               plot.margin = margin(0,25,0,0,unit = 'pt'))
+    }
+    
+
+    ## create the actogram 
+    ## Load all activity data
+      alltags<-read.csv("~/prepared datasets/alltags.csv",header=TRUE,na.strings=c("","NA"))
+      
+      #get a list of tags
+      unique(alltags$ID)
+      #isolate the tag you want to plot
+      tag_27_full <- alltags %>% filter(ID==27)
+      actogram(tag_27_full)
+      
+  
     
